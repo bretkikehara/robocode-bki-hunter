@@ -1,4 +1,4 @@
-robocode-pmj-dacruzer
+robocode-bki-hunter
 =====================
 
 Example project showing how to develop robocode robots using the Maven build system.  To install this package:
@@ -17,7 +17,7 @@ Start by following the [directions on installing Maven](http://maven.apache.org/
 
 Be sure to run mvn --version to verify that it is correctly installed.  This package has been tested using Maven 3.0.4.
 
-3. Download this robocode-pmj-dacruzer package
+3. Download this robocode-bki-hunter package
 ----------------------------------------------
 
 For those who do not know about git, the easiest way is to click the "ZIP" button at the top of this page, which will download the latest version of this repository as a .zip file. 
@@ -75,7 +75,7 @@ Note that this approach does not remove these files from the robocode installati
 Here is an example of the command line used to build and test the system, along with the output.
 
 ```shell
-[~/projecthosting/github/robocode-pmj-dacruzer]-> mvn -Drobocode.home=/Users/johnson/robocode test
+[~/projecthosting/github/robocode-bki-hunter]-> mvn -Drobocode.home=/Users/johnson/robocode test
 [INFO] Scanning for projects...
 [INFO]                                                                         
 [INFO] ------------------------------------------------------------------------
@@ -84,10 +84,10 @@ Here is an example of the command line used to build and test the system, along 
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ dacruzer ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/johnson/projecthosting/github/robocode-pmj-dacruzer/src/main/resources
+[INFO] skip non existing resourceDirectory /Users/johnson/projecthosting/github/robocode-bki-hunter/src/main/resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ dacruzer ---
-[INFO] Compiling 1 source file to /Users/johnson/projecthosting/github/robocode-pmj-dacruzer/target/classes
+[INFO] Compiling 1 source file to /Users/johnson/projecthosting/github/robocode-bki-hunter/target/classes
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:copy-resources (copy-resources) @ dacruzer ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
@@ -95,13 +95,13 @@ Here is an example of the command line used to build and test the system, along 
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ dacruzer ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/johnson/projecthosting/github/robocode-pmj-dacruzer/src/test/resources
+[INFO] skip non existing resourceDirectory /Users/johnson/projecthosting/github/robocode-bki-hunter/src/test/resources
 [INFO] 
 [INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ dacruzer ---
-[INFO] Compiling 3 source files to /Users/johnson/projecthosting/github/robocode-pmj-dacruzer/target/test-classes
+[INFO] Compiling 3 source files to /Users/johnson/projecthosting/github/robocode-bki-hunter/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.10:test (default-test) @ dacruzer ---
-[INFO] Surefire report directory: /Users/johnson/projecthosting/github/robocode-pmj-dacruzer/target/surefire-reports
+[INFO] Surefire report directory: /Users/johnson/projecthosting/github/robocode-bki-hunter/target/surefire-reports
 
 -------------------------------------------------------
  T E S T S
@@ -161,7 +161,7 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 To remove the robot from the robocode installation, invoke the clean target with the -D property:
 
 ```shell
-[~/projecthosting/github/robocode-pmj-dacruzer]-> mvn -Drobocode.home=/Users/johnson/robocode clean
+[~/projecthosting/github/robocode-bki-hunter]-> mvn -Drobocode.home=/Users/johnson/robocode clean
 [INFO] Scanning for projects...
 [INFO]                                                                         
 [INFO] ------------------------------------------------------------------------
@@ -169,7 +169,7 @@ To remove the robot from the robocode installation, invoke the clean target with
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ dacruzer ---
-[INFO] Deleting /Users/johnson/projecthosting/github/robocode-pmj-dacruzer/target
+[INFO] Deleting /Users/johnson/projecthosting/github/robocode-bki-hunter/target
 [INFO] Deleting /Users/johnson/robocode/robots/pmj (includes = [], excludes = [])
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
@@ -179,7 +179,7 @@ To remove the robot from the robocode installation, invoke the clean target with
 [INFO] Final Memory: 6M/309M
 [INFO] ------------------------------------------------------------------------
 ```
-6.  Install robocode-pmj-dacruzer into Eclipse
+6.  Install robocode-bki-hunter into Eclipse
 ----------------------------------------------
 
 Now that the system is running from the command line, you'll want to also run it from Eclipse.  To do so, bring up Eclipse, and select File | Import | Maven | Existing Maven Projects, and then complete the dialog boxes to import your project.  Eclipse will read the POM file in order to determine the libraries to include on the build path.  
@@ -194,10 +194,10 @@ To run the test cases, edit the Run configuration for each test to include -Drob
 ----------------------------------------------------------
 
 Once you have completed the above steps, you are ready to use this project for your own development. To do this:
-  * Duplicate the robocode-pmj-dacruzer directory, and rename it with your own robot's name.
+  * Duplicate the robocode-bki-hunter directory, and rename it with your own robot's name.
   * Edit the POM file, and change the top lines to correspond to your own robot name. 
   * Import the project (as a Maven project) into Eclipse.
-  * In Eclipse, select the project (robocode-pmj-dacruzer), then right-click and Refactor | Rename to rename the project to your own robot name.
+  * In Eclipse, select the project (robocode-bki-hunter), then right-click and Refactor | Rename to rename the project to your own robot name.
 
 
 
