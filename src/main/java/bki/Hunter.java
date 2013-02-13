@@ -11,7 +11,7 @@ import robocode.ScannedRobotEvent;
  * @author Bret K. Ikehara
  * 
  */
-public class TousouchuuHunter extends AdvancedRobot {
+public class Hunter extends AdvancedRobot {
 
   private ScannedRobotEvent event;
 
@@ -34,7 +34,7 @@ public class TousouchuuHunter extends AdvancedRobot {
         turnAngle = RobotHelper.calculateOptimalAngle(turnAngle);
         this.setTurnRight(turnAngle);
 
-        // turn gun towards the enemy.
+        // turn gun towads the enemy.
         double angleToEnemy = this.getHeading() - this.getGunHeading() + event.getBearing();
         angleToEnemy = RobotHelper.calculateOptimalAngle(angleToEnemy);
         this.setTurnGunRight(angleToEnemy);
