@@ -90,6 +90,38 @@ public class RobotHelper {
   }
 
   /**
+   * Calculates the oblique triangle in regards to an enemy bearing and heading. Helps calculate the
+   * angle needing to turn the gun to hit our target.
+   * 
+   * @param robotHeading double
+   * @param enemyBearing double
+   * @param enemyHeading double
+   * @return double
+   */
+  public static double calculateAngleToHeading(double robotHeading, double enemyBearing,
+      double enemyHeading) {
+    double angleToRobot = (robotHeading + enemyBearing) % 360;
+    // right triangle angle.
+    double triangleAngle = angleToRobot % 90;
+
+    double offset;
+    if (angleToRobot < 90) {
+      offset = 180;
+    }
+    else if (angleToRobot < 180) {
+      offset = 270;
+    }
+    else if (angleToRobot < 270) {
+      offset = 0;
+    }
+    else {
+      offset = 90;
+    }
+
+    return enemyHeading - (triangleAngle + offset % 360);
+  }
+
+  /**
    * Calculates the optimal right-turn angle.
    * 
    * @param angle double

@@ -173,4 +173,41 @@ public class TestRobotHelper {
     angle = RobotHelper.calculateOptimalAngle(-185);
     testCalculateOptimalTurnAngleHelper(175, angle);
   }
+  
+  /**
+   * Tests the {@link RobotHelper#calculateAngleToHeading} method.
+   */
+  @Test  
+  public void testCalculateAngleToHeading() {
+    double angle, robotHeading, enemyBearing, enemyHeading, expected;
+    
+    // basic test.
+    robotHeading = 0;
+    enemyBearing = 45;
+    enemyHeading = 90;
+    expected = -135;
+    angle = RobotHelper.calculateAngleToHeading(robotHeading, enemyBearing, enemyHeading);
+    testCalculateAngleToHeadingHelper(expected, angle);
+
+    // ensure angle is corretly normalized.
+    robotHeading = 20;
+    enemyBearing = -65;
+    enemyHeading = 160;
+    expected = 25;
+    angle = RobotHelper.calculateAngleToHeading(robotHeading, enemyBearing, enemyHeading);
+    testCalculateAngleToHeadingHelper(expected, angle);
+    
+    // TODO finish tests.
+  }
+  
+  /**
+   * Helps the {@link TestRobotHelper#testCalculateAngleToHeading} tests.
+   * 
+   * @param expectedAngle double
+   * @param angle double
+   */
+  public void testCalculateAngleToHeadingHelper(double expectedAngle, double angle) {
+    boolean b = checkDouble(expectedAngle, angle);
+    assertTrue("Angle should be " + expectedAngle + ": " + angle, b);
+  }
 }
