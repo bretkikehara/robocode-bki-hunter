@@ -20,22 +20,48 @@ public class Hunter extends AdvancedRobot {
   @Override
   public void run() {
     this.turnRadarRight(360);
-    while (true) {
-      this.setAdjustRadarForRobotTurn(true);
-      this.setAdjustGunForRobotTurn(true);
-      this.setAdjustRadarForGunTurn(true);
+    this.setAdjustRadarForRobotTurn(true);
+    this.setAdjustGunForRobotTurn(true);
+    this.setAdjustRadarForGunTurn(true);
 
+    while (true) {
       // find all enemies.
       this.setTurnRadarRight(360);
-      this.setAhead(100);
 
       if (this.name != null) {
+        this.setAhead(100);
         // turn towards enemy
         handleTurn();
 
         // predict enemy location.
         handleTurnGun();
+        this.name = null;
       }
+
+      // TODO fix wall boundry.
+      // double offset = 30;
+      // double widthOffset = this.getWidth() * 2.5;
+      // double heightOffset = this.getHeight() * 2.5;
+      // boolean nearWallXMin = this.getX() < widthOffset;
+      // boolean nearWallXMax = this.getX() > this.getBattleFieldWidth() - widthOffset;
+      // boolean nearWallYMin = this.getY() < heightOffset;
+      // boolean nearWallYMax = this.getY() > this.getBattleFieldHeight() - heightOffset;
+      //
+      // if (nearWallXMin) {
+      // double degrees = 90;
+      // if (this.getHeading() < 270) {
+      // degrees *= -1;
+      // }
+      // this.setTurnRight(degrees);
+      // }
+      // else if (nearWallXMax) {
+      // double degrees = 90;
+      // if (this.getHeading() < 90) {
+      // degrees *= -1;
+      // }
+      // this.setTurnRight(degrees);
+      // }
+
       this.execute();
     }
   }
@@ -56,15 +82,20 @@ public class Hunter extends AdvancedRobot {
   private void handleTurnGun() {
 
     // turn gun towrads the enemy.
-    double angleC = RobotHelper.calculateAngleToHeading(this.getHeading(), bearing, heading);
-    long timePassed = (System.currentTimeMillis() - time) / 1000;
-    double traveledDistance = velocity * timePassed;
-    double sideC = calculateLength(distance, traveledDistance, angleC);
+    // double angleC = RobotHelper.calculateAngleToHeading(this.getHeading(), bearing, heading);
+    // long timePassed = (System.currentTimeMillis() - time) / 1000;
+    // double traveledDistance = velocity * timePassed;
+    // double sideC = calculateLength(distance, traveledDistance, angleC);
+    //
+    // double predictiveTurn = Math.asin((traveledDistance - Math.sin(angleC)) / sideC);
+    // predictiveTurn = RobotHelper.calculateOptimalAngle(predictiveTurn);
+    // this.setTurnGunRight(predictiveTurn);
+    // this.setFire(Rules.MAX_BULLET_POWER);
 
-    double predictiveTurn = Math.asin((traveledDistance - Math.sin(angleC)) / sideC);
-    predictiveTurn = RobotHelper.calculateOptimalAngle(predictiveTurn);
-    this.turnGunRight(predictiveTurn);
-    this.fire(Rules.MAX_BULLET_POWER);
+    double angleToEnemy = this.getHeading() - this.getGunHeading() + bearing;
+    angleToEnemy = RobotHelper.calculateOptimalAngle(angleToEnemy);
+    this.setTurnGunRight(angleToEnemy);
+    this.setFire(Rules.MAX_BULLET_POWER);
   }
 
   /**
