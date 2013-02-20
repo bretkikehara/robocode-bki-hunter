@@ -40,6 +40,12 @@ public class TestRobotHelper {
     assertTrue("Distance should be 17", b);
   }
 
+  /**
+   * Helper class for tests.
+   * 
+   * @param expectedAngle double
+   * @param angle double
+   */
   public void testCalculateAngleToPointHelper(double expectedAngle, double angle) {
     boolean b = checkDouble(expectedAngle, angle);
     assertTrue("Angle should be " + expectedAngle + "  degrees: " + angle, b);

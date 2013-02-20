@@ -1,20 +1,19 @@
 package bki;
 
-import bki.RobotHelper;
 import robocode.AdvancedRobot;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
 
 /**
- * Provides the implementation for a Robocode {@link AdvancedRobot}
+ * Provides the implementation for a Robocode {@link AdvancedRobot}.
  * 
  * @author Bret K. Ikehara
  * 
  */
 public class Hunter extends AdvancedRobot {
 
-  private long time;
-  private double bearing, heading, velocity, distance;
+  private double bearing, distance;
+  // double heading, velocity;
   private String name = null;
 
   @Override
@@ -118,9 +117,8 @@ public class Hunter extends AdvancedRobot {
       name = event.getName();
       distance = event.getDistance();
       bearing = event.getBearing();
-      heading = event.getHeading();
-      velocity = event.getVelocity();
-      time = System.currentTimeMillis();
+      // heading = event.getHeading();
+      // velocity = event.getVelocity();
     }
   }
 }

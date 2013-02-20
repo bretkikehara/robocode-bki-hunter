@@ -104,6 +104,188 @@
 					</filesets>
 				</configuration>
 			</plugin>
-		</plugins>
+      <!-- Explicitly indicate that our source and target code is Java 7. This removes a warning from Eclipse. -->
+      <!-- More details: http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+      
+      <!--  Support Javadoc. -->
+      <!--  More info:  http://maven.apache.org/plugins/maven-javadoc-plugin/usage.html -->      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+        </configuration>
+      </plugin>
+      
+      <!--  Support .zip distribution of the project.  -->
+      <!--  Invocation: mvn assembly:single -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <formats>
+            <format>zip</format>
+          </formats>
+          <descriptorRefs>
+            <descriptorRef>project</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+      </plugin>
+
+      <!-- Define the checkstyle plugin: Runs automatically during verify phase. -->
+      <!-- Run separately with:  mvn checkstyle:check -->
+      <!-- More details: http://maven.apache.org/plugins/maven-checkstyle-plugin/checkstyle-mojo.html -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.9.1</version>
+        <executions>
+          <execution>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <configLocation>http://ics-software-engineering.googlecode.com/svn/trunk/configfiles/checkstyle.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <failsOnError>true</failsOnError>
+        </configuration>
+      </plugin>
+
+      <!-- Findbugs plugin. Runs automatically during verify phase. -->
+      <!-- Run separately with: mvn findbugs:check -->
+      <!-- Details at: http://mojo.codehaus.org/findbugs-maven-plugin/check-mojo.html -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>2.5.2</version>
+        <executions>
+          <execution>
+            <phase>verify</phase> 
+            <goals>
+              <goal>check</goal> 
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- PMD Plugin.  Runs automatically during verify phase. -->
+      <!-- Run separately with: mvn pmd:check -->
+      <!-- Details at: http://maven.apache.org/plugins/maven-pmd-plugin/pmd-mojo.html -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.7.1</version>
+        <executions>
+          <execution>
+            <phase>verify</phase> 
+            <goals>
+              <goal>check</goal> 
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <verbose>true</verbose>
+          <minimumTokens>100</minimumTokens>
+          <includeTests>true</includeTests>
+          <rulesets>
+            <ruleset>http://ics-software-engineering.googlecode.com/svn/trunk/configfiles/pmd.rulesets.xml</ruleset>
+          </rulesets>
+          <targetJdk>1.6</targetJdk>
+        </configuration>
+      </plugin>
+
+      <!-- Jacoco Plugin.  Runs automatically during verify phase.
+      There is no independent way to run it at the moment. 
+      Details at: http://www.eclemma.org/jacoco/trunk/doc/maven.html -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.6.2.201302030002</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <check>
+                <classRatio>100</classRatio>
+                <methodRatio>100</methodRatio>
+              </check>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    
+    <!--  Provided to remove a spurious error from Eclipse. -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <versionRange>[0.6.2.201302030002,)</versionRange>
+                    <goals><goal>prepare-agent</goal></goals>
+                  </pluginExecutionFilter>
+                  <action><ignore></ignore></action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>
+                      org.apache.maven.plugins
+                    </groupId>
+                    <artifactId>
+                      maven-checkstyle-plugin
+                    </artifactId>
+                    <versionRange>
+                      [2.9.1,)
+                    </versionRange>
+                    <goals>
+                      <goal>check</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
 	</build>
 </project>

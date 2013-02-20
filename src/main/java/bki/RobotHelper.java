@@ -15,7 +15,7 @@ public class RobotHelper {
   /**
    * Converts a radian value to degree value.
    * 
-   * @param radian
+   * @param radian double
    * @return double
    */
   public static final double convertRadiantoDegrees(double radian) {
