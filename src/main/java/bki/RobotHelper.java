@@ -9,6 +9,154 @@ import robocode.Robot;
  */
 public class RobotHelper {
 
+  /**
+   * Defines an area enumeration for each direction starting with north. See
+   * {@link Robot#getHeading}() for more information regarding meaning behind enumerated values.
+   * 
+   * @author Bret K. Ikehara
+   */
+  public enum Area {
+    /**
+     * Defines an unknown area. Most likely in the center where we don't case.
+     */
+    UNKNOWN(-1),
+    /**
+     * Defines the north section of the battle field.
+     */
+    NORTH(0),
+    /**
+     * Defines the north east section of the battle field.
+     */
+    NORTHEAST(1),
+    /**
+     * Defines the east section of the battle field.
+     */
+    EAST(2),
+    /**
+     * Defines the south east section of the battle field.
+     */
+    SOUTHEAST(3),
+    /**
+     * Defines the south section of the battle field.
+     */
+    SOUTH(4),
+    /**
+     * Defines the south west section of the battle field.
+     */
+    SOUTHWEST(5),
+    /**
+     * Defines the west section of the battle field.
+     */
+    WEST(6),
+
+    /**
+     * Defines the north west section of the battle field.
+     */
+    NORTHWEST(7);
+
+    private int area;
+
+    /**
+     * Area enumeration.
+     * 
+     * @param area int
+     */
+    Area(int area) {
+      this.area = area;
+    }
+
+    /**
+     * Convenience method to ensure proper value.
+     * 
+     * @param i Area number.
+     * @return {@link Area}
+     */
+    private static Area valueOf(int i) {
+      switch (i) {
+      case 0:
+        return NORTH;
+      case 1:
+        return NORTHEAST;
+      case 2:
+        return EAST;
+      case 3:
+        return SOUTHEAST;
+      case 4:
+        return SOUTH;
+      case 5:
+        return SOUTHWEST;
+      case 6:
+        return WEST;
+      case 7:
+        return NORTHWEST;
+      default:
+        return UNKNOWN;
+      }
+    }
+
+    /**
+     * Gets the area of the robot on the battle field dimensions with regards to the offset from the
+     * wall.
+     * 
+     * @param robotX Robot x coordinate.
+     * @param robotY Robot y coordinate.
+     * @param battleFiledWidth Battle field width.
+     * @param battleFieldHeight Battle field height.
+     * @param widthOffset The padding inside the battle field.
+     * @param heightOffset The padding inside the battle field.
+     * @return Area
+     */
+    public static Area getArea(double robotX, double robotY, double battleFiledWidth,
+        double battleFieldHeight, double widthOffset, double heightOffset) {
+      boolean nearWallXMin = robotX < widthOffset;
+      boolean nearWallXMax = robotX > battleFiledWidth - widthOffset;
+      boolean nearWallYMin = robotY < heightOffset;
+      boolean nearWallYMax = robotY > battleFieldHeight - heightOffset;
+      if (nearWallYMax) {
+        if (nearWallXMax) {
+          return Area.valueOf(1);
+        }
+        else if (nearWallXMin) {
+          return Area.valueOf(7);
+        }
+        else {
+          return Area.valueOf(0);
+        }
+      }
+      else if (nearWallYMin) {
+        if (nearWallXMax) {
+          return Area.valueOf(3);
+        }
+        else if (nearWallXMin) {
+          return Area.valueOf(5);
+        }
+        else {
+          return Area.valueOf(4);
+        }
+      }
+      else {
+        if (nearWallXMax) {
+          return Area.valueOf(2);
+        }
+        else if (nearWallXMin) {
+          return Area.valueOf(6);
+        }
+        else {
+          return Area.valueOf(-1);
+        }
+      }
+    }
+
+    /**
+     * Gets the area value.
+     * 
+     * @return int
+     */
+    public int getValue() {
+      return area;
+    }
+  };
+
   // helps calculate radian to degree.
   private static final double RADIAN_TO_DEGREE = 180 / Math.PI;
 
@@ -30,7 +178,7 @@ public class RobotHelper {
    * @param y2 double To-coordinate.
    * @return double
    */
-  public static double calculateDistance(Robot robot, double x2, double y2) {
+  public static double calculateDistance(final Robot robot, final double x2, final double y2) {
     return calculateDistance(robot.getX(), robot.getY(), x2, y2);
 
   }
@@ -44,7 +192,8 @@ public class RobotHelper {
    * @param y2 double To-coordinate.
    * @return double
    */
-  public static double calculateDistance(double x1, double y1, double x2, double y2) {
+  public static double calculateDistance(final double x1, final double y1, final double x2,
+      final double y2) {
     double value = Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2);
     return Math.sqrt(value);
   }
@@ -57,7 +206,8 @@ public class RobotHelper {
    * @param pointY double Coordinate to point the robot.
    * @return double
    */
-  public static double calculateAngleToPoint(Robot robot, double pointX, double pointY) {
+  public static double calculateAngleToPoint(final Robot robot, final double pointX,
+      final double pointY) {
     return calculateAngleToPoint(robot.getHeading(), robot.getX(), robot.getY(), pointX, pointY);
   }
 
@@ -72,21 +222,22 @@ public class RobotHelper {
    * @param pointY double Coordinate to point the robot.
    * @return double
    */
-  public static double calculateAngleToPoint(double heading, double robotX, double robotY,
-      double pointX, double pointY) {
+  public static double calculateAngleToPoint(final double heading, final double robotX,
+      final double robotY, final double pointX, final double pointY) {
     double tanget = (pointX - robotX) / (pointY - robotY);
     double angle = Math.atan(tanget);
     angle = convertRadiantoDegrees(angle);
 
     // face in the y-direction towards the point.
+    double headingTowardsPoint;
     if (robotY > pointY) {
-      heading = 180 - heading;
+      headingTowardsPoint = 180 - heading;
     }
     else {
-      heading = 0 - heading;
+      headingTowardsPoint = 0 - heading;
     }
 
-    return heading + angle;
+    return headingTowardsPoint + angle;
   }
 
   /**
@@ -98,8 +249,8 @@ public class RobotHelper {
    * @param enemyHeading double
    * @return double
    */
-  public static double calculateAngleToHeading(double robotHeading, double enemyBearing,
-      double enemyHeading) {
+  public static double calculateAngleToHeading(final double robotHeading,
+      final double enemyBearing, final double enemyHeading) {
     double angleToRobot = (robotHeading + enemyBearing) % 360;
     // right triangle angle.
     double triangleAngle = angleToRobot % 90;
@@ -127,7 +278,7 @@ public class RobotHelper {
    * @param angle double
    * @return double
    */
-  public static double calculateOptimalAngle(double angle) {
+  public static double calculateOptimalAngle(final double angle) {
     double a = angle % 360;
     if (a > 180) {
       return a - 360;

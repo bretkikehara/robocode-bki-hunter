@@ -1,5 +1,6 @@
 package bki;
 
+import bki.RobotHelper.Area;
 import robocode.AdvancedRobot;
 import robocode.Rules;
 import robocode.ScannedRobotEvent;
@@ -29,6 +30,7 @@ public class Hunter extends AdvancedRobot {
 
       if (this.name != null) {
         this.setAhead(100);
+        
         // turn towards enemy
         handleTurn();
 
@@ -37,30 +39,33 @@ public class Hunter extends AdvancedRobot {
         this.name = null;
       }
 
-      // TODO fix wall boundry.
-      // double offset = 30;
-      // double widthOffset = this.getWidth() * 2.5;
-      // double heightOffset = this.getHeight() * 2.5;
-      // boolean nearWallXMin = this.getX() < widthOffset;
-      // boolean nearWallXMax = this.getX() > this.getBattleFieldWidth() - widthOffset;
-      // boolean nearWallYMin = this.getY() < heightOffset;
-      // boolean nearWallYMax = this.getY() > this.getBattleFieldHeight() - heightOffset;
-      //
-      // if (nearWallXMin) {
-      // double degrees = 90;
-      // if (this.getHeading() < 270) {
-      // degrees *= -1;
-      // }
-      // this.setTurnRight(degrees);
-      // }
-      // else if (nearWallXMax) {
-      // double degrees = 90;
-      // if (this.getHeading() < 90) {
-      // degrees *= -1;
-      // }
-      // this.setTurnRight(degrees);
-      // }
+      handleAvoidWall();
 
+      this.execute();
+    }
+  }
+
+  /**
+   * Ensures that the robot will avoid the wall.
+   */
+  public void handleAvoidWall() {
+    double offset = 300;
+    
+    // checks whether we are close to the wall.
+    Area area =
+        Area.getArea(this.getX(), this.getY(), this.getBattleFieldWidth(),
+            this.getBattleFieldHeight(), offset, offset);
+    int angleLocation = (int) (this.getHeading() / 45);
+
+    if (!Area.UNKNOWN.equals(area)) {
+      // ensure the robot turns away from the wall.
+      if (area.getValue() == angleLocation) {
+        this.setTurnRight(-180);
+      }
+      else if (area.getValue() == (angleLocation - 1) % 8) {
+        this.setTurnLeft(180);
+      }
+      this.setAhead(50);
       this.execute();
     }
   }
