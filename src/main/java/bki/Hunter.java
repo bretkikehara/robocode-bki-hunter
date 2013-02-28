@@ -17,6 +17,8 @@ public class Hunter extends AdvancedRobot {
   // double heading, velocity;
   private String name = null;
 
+  long fireTime = 0;
+
   @Override
   public void run() {
     this.turnRadarRight(360);
@@ -27,10 +29,9 @@ public class Hunter extends AdvancedRobot {
     while (true) {
       // find all enemies.
       this.setTurnRadarRight(360);
+      this.setAhead(100);
 
       if (this.name != null) {
-        this.setAhead(100);
-        
         // turn towards enemy
         handleTurn();
 
@@ -49,24 +50,18 @@ public class Hunter extends AdvancedRobot {
    * Ensures that the robot will avoid the wall.
    */
   public void handleAvoidWall() {
-    double offset = 300;
-    
-    // checks whether we are close to the wall.
+    double offset = 100;
     Area area =
         Area.getArea(this.getX(), this.getY(), this.getBattleFieldWidth(),
-            this.getBattleFieldHeight(), offset, offset);
-    int angleLocation = (int) (this.getHeading() / 45);
+            this.getBattleFieldHeight(), offset, 50);
 
-    if (!Area.UNKNOWN.equals(area)) {
-      // ensure the robot turns away from the wall.
-      if (area.getValue() == angleLocation) {
-        this.setTurnRight(-180);
-      }
-      else if (area.getValue() == (angleLocation - 1) % 8) {
-        this.setTurnLeft(180);
-      }
-      this.setAhead(50);
-      this.execute();
+    // ensure the robot turns away from the wall.
+    double angleAwayFromWall = RobotHelper.calculateAvoidWall(this.getHeading(), area);
+
+    // checks whether we are close to the wall.
+    if (angleAwayFromWall != 0) {
+      this.setTurnRight(angleAwayFromWall);
+      this.setAhead(5);
     }
   }
 
@@ -84,8 +79,7 @@ public class Hunter extends AdvancedRobot {
    * Turns the gun for predictive firing.
    */
   private void handleTurnGun() {
-
-    // turn gun towrads the enemy.
+    // turn gun towards the enemy.
     // double angleC = RobotHelper.calculateAngleToHeading(this.getHeading(), bearing, heading);
     // long timePassed = (System.currentTimeMillis() - time) / 1000;
     // double traveledDistance = velocity * timePassed;
@@ -95,13 +89,17 @@ public class Hunter extends AdvancedRobot {
     // predictiveTurn = RobotHelper.calculateOptimalAngle(predictiveTurn);
     // this.setTurnGunRight(predictiveTurn);
     // this.setFire(Rules.MAX_BULLET_POWER);
-
     double angleToEnemy = this.getHeading() - this.getGunHeading() + bearing;
     angleToEnemy = RobotHelper.calculateOptimalAngle(angleToEnemy);
     this.setTurnGunRight(angleToEnemy);
-    this.setFire(Rules.MAX_BULLET_POWER);
+
+    if (getGunTurnRemaining() == 0) {
+      this.setFire(Rules.MAX_BULLET_POWER);
+    }
   }
 
+  
+  
   /**
    * Calculates the length of a side using the law of cosines.
    * 
@@ -115,6 +113,11 @@ public class Hunter extends AdvancedRobot {
     return Math.sqrt(sideC);
   }
 
+  /**
+   * Handles a scanned robot event.
+   * 
+   * @param event {@link ScannedRobotEvent}
+   */
   @Override
   public void onScannedRobot(ScannedRobotEvent event) {
     // target the closest enemy.

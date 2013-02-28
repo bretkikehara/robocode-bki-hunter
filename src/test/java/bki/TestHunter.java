@@ -1,9 +1,7 @@
 package bki;
 
 import static org.junit.Assert.assertTrue;
-import robocode.BattleResults;
 import robocode.Rules;
-import robocode.control.events.BattleCompletedEvent;
 import robocode.control.events.TurnEndedEvent;
 import robocode.control.snapshot.IBulletSnapshot;
 import robocode.control.snapshot.IRobotSnapshot;
@@ -11,16 +9,16 @@ import robocode.control.snapshot.ITurnSnapshot;
 import robocode.control.testing.RobotTestBed;
 
 /**
- * Tests the {@link RobotHelper#Hunter} robot.
+ * Tests the {@link Hunter} robot.
  * 
  * @author Bret K. Ikehara
  */
 public class TestHunter extends RobotTestBed {
 
-  final String myRobotName = "bki.Hunter*";
+  private static final String myRobotName = "bki.Hunter*";
 
   /**
-   * Specifies that SittingDuck and DaCruzer are to be matched up in this test case.
+   * Specifies the robots that will fight.
    * 
    * @return The comma-delimited list of robots in this match.
    */
@@ -39,18 +37,8 @@ public class TestHunter extends RobotTestBed {
     return 20;
   }
 
-  @Override
-  public void onBattleCompleted(BattleCompletedEvent event) {
-    for (BattleResults results : event.getIndexedResults()) {
-      if (myRobotName.equals(results.getTeamLeaderName())) {
-        boolean check = results.getFirsts() > 10;
-        assertTrue("Won at least 50%", check);
-      }
-    }
-  }
-
-  /*
-   * Tests what happens on turn end.
+  /**
+   * Tests that a bullet is fire every turn.
    * 
    * @param event {@link TurnEndedEvent}
    */
@@ -63,17 +51,15 @@ public class TestHunter extends RobotTestBed {
     for (IBulletSnapshot bullet : turn.getBullets()) {
       IRobotSnapshot robot = robots[bullet.getOwnerIndex()];
       if (myRobotName.equals(robot.getName())) {
-        boolean test = testDouble(Rules.MAX_BULLET_POWER, bullet.getPower(), 0.3);
-        if (test) {
+        // fire power is limited when life is low.
+        if (robot.getEnergy() > 10.0) {
+          boolean test = testDouble(Rules.MAX_BULLET_POWER, bullet.getPower(), 0.3);
           assertTrue("Always max fire power: " + bullet.getPower(), test);
-        }
-        else {
-          // previous bullet may have hit gaining us health, so health can be as much as 10.
-          test = robot.getEnergy() < 10.0;
-          assertTrue("Low life: " + robot.getEnergy(), test);
         }
       }
     }
+
+    // TODO ensure robot doesn't get stuck on wall.
   }
 
   /**

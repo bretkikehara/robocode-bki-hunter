@@ -9,6 +9,8 @@ import robocode.Robot;
  */
 public class RobotHelper {
 
+  public static final double MAX_AVOID_WALL_TURN = 75;
+  
   /**
    * Defines an area enumeration for each direction starting with north. See
    * {@link Robot#getHeading}() for more information regarding meaning behind enumerated values.
@@ -287,5 +289,44 @@ public class RobotHelper {
       return a + 360;
     }
     return a;
+  }
+
+  /**
+   * Calculates how to avoid the wall based on the robot's area based on the heading of the robot.
+   * 
+   * @param robotHeading double
+   * @param area {@link Area}
+   * @return double
+   */
+  public static double calculateAvoidWall(final double robotHeading, final Area area) {
+    if (Area.UNKNOWN == area) {
+      return 0;
+    }
+
+    // down cast to int.
+    int angleLocation = (int) ((robotHeading % 360) / 45);
+    int areaVal = area.getValue();
+
+    int a2 = (areaVal + 1) % 8;
+    int a3 = (areaVal - 1) % 8;
+    int a4 = (areaVal - 2) % 8;
+
+    // handle negative values for the check.
+    if (areaVal == 0) {
+      a3 = 7;
+      a4 = 6;
+    }
+    else if (areaVal == 1) {
+      a4 = 7;
+    }
+
+    // ensure the robot turns away from the wall.
+    if (areaVal == angleLocation || a2 == angleLocation) {
+      return MAX_AVOID_WALL_TURN;
+    }
+    else if (a3 == angleLocation || a4 == angleLocation) {
+      return -MAX_AVOID_WALL_TURN;
+    }
+    return 0;
   }
 }

@@ -1,6 +1,7 @@
 package bki;
 
 import org.junit.Test;
+import bki.RobotHelper.Area;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -41,17 +42,6 @@ public class TestRobotHelper {
   }
 
   /**
-   * Helper class for tests.
-   * 
-   * @param expectedAngle double
-   * @param angle double
-   */
-  public void testCalculateAngleToPointHelper(double expectedAngle, double angle) {
-    boolean b = checkDouble(expectedAngle, angle);
-    assertTrue("Angle should be " + expectedAngle + "  degrees: " + angle, b);
-  }
-
-  /**
    * Test the {@link RobotHelper#calculateAngleToPoint} method.
    */
   @Test
@@ -63,87 +53,76 @@ public class TestRobotHelper {
     y = 9;
     // face north.
     angle = RobotHelper.calculateAngleToPoint(0, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(63.43, angle);
+    testDoubleHelper(63.43, angle);
 
     // face east
     angle = RobotHelper.calculateAngleToPoint(90, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(-26.56, angle);
+    testDoubleHelper(-26.56, angle);
 
     // face south
     angle = RobotHelper.calculateAngleToPoint(180, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(-116.56, angle);
+    testDoubleHelper(-116.56, angle);
 
     // face south
     angle = RobotHelper.calculateAngleToPoint(270, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(-206.56, angle);
+    testDoubleHelper(-206.56, angle);
 
     // robot position in regards to center: above x and below y.
     x = 13;
     y = 8;
     // face north.
     angle = RobotHelper.calculateAngleToPoint(0, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(-56.31, angle);
+    testDoubleHelper(-56.31, angle);
 
     // face east
     angle = RobotHelper.calculateAngleToPoint(90, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(-146.31, angle);
+    testDoubleHelper(-146.31, angle);
 
     // face south
     angle = RobotHelper.calculateAngleToPoint(180, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(-236.31, angle);
+    testDoubleHelper(-236.31, angle);
 
     // face west
     angle = RobotHelper.calculateAngleToPoint(270, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(-326.31, angle);
+    testDoubleHelper(-326.31, angle);
 
     // robot position in regards to center: below x and above y.
     x = 8;
     y = 13;
     // face north.
     angle = RobotHelper.calculateAngleToPoint(0, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(146.31, angle);
+    testDoubleHelper(146.31, angle);
 
     // face east
     angle = RobotHelper.calculateAngleToPoint(90, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(56.31, angle);
+    testDoubleHelper(56.31, angle);
 
     // face south
     angle = RobotHelper.calculateAngleToPoint(180, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(-33.69, angle);
+    testDoubleHelper(-33.69, angle);
 
     // face west
     angle = RobotHelper.calculateAngleToPoint(270, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(-123.69, angle);
+    testDoubleHelper(-123.69, angle);
 
     // robot position in regards to center: above x and above y.
     x = 12;
     y = 13;
     // face north.
     angle = RobotHelper.calculateAngleToPoint(0, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(213.69, angle);
+    testDoubleHelper(213.69, angle);
 
     // face east
     angle = RobotHelper.calculateAngleToPoint(90, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(123.69, angle);
+    testDoubleHelper(123.69, angle);
 
     // face south
     angle = RobotHelper.calculateAngleToPoint(180, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(33.69, angle);
+    testDoubleHelper(33.69, angle);
 
     // face west
     angle = RobotHelper.calculateAngleToPoint(270, x, y, centerX, centerY);
-    testCalculateAngleToPointHelper(-56.31, angle);
-  }
-
-  /**
-   * Helps the {@link TestRobotHelper#testCalculateOptimalTurnAngle} tests.
-   * 
-   * @param expectedAngle double
-   * @param angle double
-   */
-  public void testCalculateOptimalTurnAngleHelper(double expectedAngle, double angle) {
-    boolean b = checkDouble(expectedAngle, angle);
-    assertTrue("Angle should be " + expectedAngle + ": " + angle, b);
+    testDoubleHelper(-56.31, angle);
   }
 
   /**
@@ -152,68 +131,141 @@ public class TestRobotHelper {
   @Test
   public void testCalculateOptimalTurnAngle() {
     double angle;
-    
+
     angle = RobotHelper.calculateOptimalAngle(360);
-    testCalculateOptimalTurnAngleHelper(0, angle);
+    testDoubleHelper(0, angle);
 
     angle = RobotHelper.calculateOptimalAngle(720);
-    testCalculateOptimalTurnAngleHelper(0, angle);
-    
+    testDoubleHelper(0, angle);
 
     angle = RobotHelper.calculateOptimalAngle(-360);
-    testCalculateOptimalTurnAngleHelper(0, angle);
-    
+    testDoubleHelper(0, angle);
 
     angle = RobotHelper.calculateOptimalAngle(180);
-    testCalculateOptimalTurnAngleHelper(180, angle);
-    
+    testDoubleHelper(180, angle);
 
     angle = RobotHelper.calculateOptimalAngle(-180);
-    testCalculateOptimalTurnAngleHelper(-180, angle);
-    
+    testDoubleHelper(-180, angle);
 
     angle = RobotHelper.calculateOptimalAngle(185);
-    testCalculateOptimalTurnAngleHelper(-175, angle);
-    
+    testDoubleHelper(-175, angle);
 
     angle = RobotHelper.calculateOptimalAngle(-185);
-    testCalculateOptimalTurnAngleHelper(175, angle);
+    testDoubleHelper(175, angle);
   }
-  
+
   /**
    * Tests the {@link RobotHelper#calculateAngleToHeading} method.
    */
-  @Test  
+  @Test
   public void testCalculateAngleToHeading() {
     double angle, robotHeading, enemyBearing, enemyHeading, expected;
-    
+
     // basic test.
     robotHeading = 0;
     enemyBearing = 45;
     enemyHeading = 90;
     expected = -135;
     angle = RobotHelper.calculateAngleToHeading(robotHeading, enemyBearing, enemyHeading);
-    testCalculateAngleToHeadingHelper(expected, angle);
+    testDoubleHelper(expected, angle);
 
-    // ensure angle is corretly normalized.
+    // ensure angle is correctly normalized.
     robotHeading = 20;
     enemyBearing = -65;
     enemyHeading = 160;
     expected = 25;
     angle = RobotHelper.calculateAngleToHeading(robotHeading, enemyBearing, enemyHeading);
-    testCalculateAngleToHeadingHelper(expected, angle);
-    
+    testDoubleHelper(expected, angle);
+
     // TODO finish tests.
   }
-  
+
   /**
-   * Helps the {@link TestRobotHelper#testCalculateAngleToHeading} tests.
+   * Helps the tests angles.
    * 
    * @param expectedAngle double
    * @param angle double
    */
-  public void testCalculateAngleToHeadingHelper(double expectedAngle, double angle) {
+  public void testDoubleHelper(double expectedAngle, double angle) {
     boolean b = checkDouble(expectedAngle, angle);
-    assertTrue("Angle should be " + expectedAngle + ": " + angle, b);
+    assertTrue("Angle should be " + expectedAngle + ", but is " + angle, b);
+  }
+
+  /**
+   * Tests the {@link RobotHelper#calculateAvoidWall} method.
+   */
+  @Test
+  public void testCalculateAvoidWall() {
+
+    double angle, expectedAngle;
+    Area wall;
+
+    // test north wall
+    wall = Area.NORTH;
+    // north heading
+    expectedAngle = 180;
+    angle = RobotHelper.calculateAvoidWall(0, wall);
+    testDoubleHelper(expectedAngle, angle);
+
+    // north west heading
+    expectedAngle = -180;
+    angle = RobotHelper.calculateAvoidWall(315, wall);
+    testDoubleHelper(expectedAngle, angle);
+
+    // north east heading
+    expectedAngle = 180;
+    angle = RobotHelper.calculateAvoidWall(45, wall);
+    testDoubleHelper(expectedAngle, angle);
+
+    // south heading
+    expectedAngle = 0;
+    angle = RobotHelper.calculateAvoidWall(180, wall);
+    testDoubleHelper(expectedAngle, angle);
+
+    // test north east wall
+    wall = Area.NORTHEAST;
+
+    // test north east heading
+    expectedAngle = 180;
+    angle = RobotHelper.calculateAvoidWall(45, wall);
+    testDoubleHelper(expectedAngle, angle);
+
+    // test north heading
+    expectedAngle = -180;
+    angle = RobotHelper.calculateAvoidWall(0, wall);
+    testDoubleHelper(expectedAngle, angle);
+
+    // test east heading
+    expectedAngle = 180;
+    angle = RobotHelper.calculateAvoidWall(90, wall);
+    testDoubleHelper(expectedAngle, angle);
+
+    // test south west heading
+    expectedAngle = 0;
+    angle = RobotHelper.calculateAvoidWall(270, wall);
+    testDoubleHelper(expectedAngle, angle);
+
+    // test north west wall
+    wall = Area.NORTHWEST;
+
+    // test north west heading
+    expectedAngle = 180;
+    angle = RobotHelper.calculateAvoidWall(315, wall);
+    testDoubleHelper(expectedAngle, angle);
+
+    // test north heading
+    expectedAngle = 180;
+    angle = RobotHelper.calculateAvoidWall(0, wall);
+    testDoubleHelper(expectedAngle, angle);
+
+    // test west heading
+    expectedAngle = -180;
+    angle = RobotHelper.calculateAvoidWall(270, wall);
+    testDoubleHelper(expectedAngle, angle);
+
+    // test south west heading
+    expectedAngle = 0;
+    angle = RobotHelper.calculateAvoidWall(135, wall);
+    testDoubleHelper(expectedAngle, angle);
   }
 }
