@@ -9,8 +9,11 @@ import robocode.Robot;
  */
 public class RobotHelper {
 
+  /**
+   * Angle to turn to avoid the wall.
+   */
   public static final double MAX_AVOID_WALL_TURN = 75;
-  
+
   /**
    * Defines an area enumeration for each direction starting with north. See
    * {@link Robot#getHeading}() for more information regarding meaning behind enumerated values.
@@ -328,5 +331,18 @@ public class RobotHelper {
       return -MAX_AVOID_WALL_TURN;
     }
     return 0;
+  }
+
+  /**
+   * Calculates the a move vector.
+   * 
+   * @param velocity double
+   * @param heading double
+   * @param time double
+   * @return double
+   */
+  public static double calculateVector(double velocity, double heading, double time) {
+    double headingRadian = Math.toRadians(heading);
+    return velocity * time * Math.sin(headingRadian);
   }
 }

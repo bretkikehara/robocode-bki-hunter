@@ -1,6 +1,7 @@
 package bki;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import robocode.Rules;
 import robocode.control.events.TurnEndedEvent;
 import robocode.control.snapshot.IBulletSnapshot;
@@ -16,6 +17,9 @@ import robocode.control.testing.RobotTestBed;
 public class TestHunter extends RobotTestBed {
 
   private static final String myRobotName = "bki.Hunter*";
+
+  private double positionX = -1, positionY = -1;
+  private int positionCheckCount = 0;
 
   /**
    * Specifies the robots that will fight.
@@ -56,10 +60,36 @@ public class TestHunter extends RobotTestBed {
           boolean test = testDouble(Rules.MAX_BULLET_POWER, bullet.getPower(), 0.3);
           assertTrue("Always max fire power: " + bullet.getPower(), test);
         }
+        else {
+          boolean test = testDouble(Rules.MAX_BULLET_POWER, bullet.getPower(), 3.0);
+          assertTrue("Fire as much as possible: " + bullet.getPower(), test);
+        }
       }
     }
 
-    // TODO ensure robot doesn't get stuck on wall.
+    // test to ensure we aren't in the same place.
+    for (IRobotSnapshot robot : turn.getRobots()) {
+      if (myRobotName.equals(robot.getName())) {
+        if (this.positionX == -1) {
+          this.positionX = robot.getX();
+          this.positionY = robot.getY();
+        }
+        else {
+          boolean checkX = testDouble(this.positionX, robot.getX(), 3.0);
+          boolean checkY = testDouble(this.positionY, robot.getY(), 3.0);
+          if (checkX && checkY) {
+            positionCheckCount += 1;
+          }
+          else {
+            positionCheckCount = 0;
+          }
+
+          if (positionCheckCount > 10) {
+            fail("Robot got stuck on the wall.");
+          }
+        }
+      }
+    }
   }
 
   /**

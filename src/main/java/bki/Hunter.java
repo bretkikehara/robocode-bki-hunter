@@ -9,15 +9,14 @@ import robocode.ScannedRobotEvent;
  * Provides the implementation for a Robocode {@link AdvancedRobot}.
  * 
  * @author Bret K. Ikehara
- * 
  */
 public class Hunter extends AdvancedRobot {
 
   private double bearing, distance;
-  // double heading, velocity;
-  private String name = null;
 
-  long fireTime = 0;
+  // private double heading, velocity;
+
+  private String name = null;
 
   @Override
   public void run() {
@@ -79,38 +78,12 @@ public class Hunter extends AdvancedRobot {
    * Turns the gun for predictive firing.
    */
   private void handleTurnGun() {
-    // turn gun towards the enemy.
-    // double angleC = RobotHelper.calculateAngleToHeading(this.getHeading(), bearing, heading);
-    // long timePassed = (System.currentTimeMillis() - time) / 1000;
-    // double traveledDistance = velocity * timePassed;
-    // double sideC = calculateLength(distance, traveledDistance, angleC);
-    //
-    // double predictiveTurn = Math.asin((traveledDistance - Math.sin(angleC)) / sideC);
-    // predictiveTurn = RobotHelper.calculateOptimalAngle(predictiveTurn);
-    // this.setTurnGunRight(predictiveTurn);
-    // this.setFire(Rules.MAX_BULLET_POWER);
+    // double enemyVector = RobotHelper.calculateVector(this.heading, this.velocity, 10);
+
     double angleToEnemy = this.getHeading() - this.getGunHeading() + bearing;
     angleToEnemy = RobotHelper.calculateOptimalAngle(angleToEnemy);
     this.setTurnGunRight(angleToEnemy);
-
-    if (getGunTurnRemaining() == 0) {
-      this.setFire(Rules.MAX_BULLET_POWER);
-    }
-  }
-
-  
-  
-  /**
-   * Calculates the length of a side using the law of cosines.
-   * 
-   * @param sideA double
-   * @param sideB double
-   * @param angleC double
-   * @return sideC double
-   */
-  public double calculateLength(double sideA, double sideB, double angleC) {
-    double sideC = Math.pow(sideA, 2) + Math.pow(sideB, 2) - 2 * sideA * sideB * Math.cos(angleC);
-    return Math.sqrt(sideC);
+    this.setFireBullet(Rules.MAX_BULLET_POWER);
   }
 
   /**
