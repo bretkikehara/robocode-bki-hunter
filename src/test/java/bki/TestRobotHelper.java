@@ -181,6 +181,19 @@ public class TestRobotHelper {
   }
 
   /**
+   * Tests the {@link RobotHelper#calculateRightAngleToHeading} method.
+   */
+  @Test
+  public void testCalculateRightAngleToHeading() {
+
+    double expectedAngle, angle;
+
+    expectedAngle = 45;
+    angle = RobotHelper.calculateRightAngleToHeading(45);
+    testDoubleHelper(expectedAngle, angle);
+  }
+
+  /**
    * Helps the tests angles.
    * 
    * @param expectedAngle double

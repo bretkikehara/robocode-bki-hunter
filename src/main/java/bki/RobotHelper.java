@@ -274,9 +274,35 @@ public class RobotHelper {
       offset = 90;
     }
 
-    return enemyHeading - (triangleAngle + offset % 360);
+    return enemyHeading - (triangleAngle + offset);
   }
 
+  /**
+   * Calculates the angle of the right triangle to the heading.
+   * 
+   * @param heading double
+   * @return double
+   */
+  public static double calculateRightAngleToHeading(final double heading) {
+    double angle = heading % 90;
+
+    double offset;
+    if (heading < 90) {
+      offset = 180;
+    }
+    else if (heading < 180) {
+      offset = 270;
+    }
+    else if (heading < 270) {
+      offset = 0;
+    }
+    else {
+      offset = 90;
+    }
+    
+    return angle + offset;
+  }
+  
   /**
    * Calculates the optimal right-turn angle.
    * 
