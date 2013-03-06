@@ -197,75 +197,65 @@ public class TestRobotHelper {
   @Test
   public void testCalculateAvoidWall() {
 
-    double angle, expectedAngle;
+    double angle, maxAngle;
     Area wall;
+
+    // north heading
+    maxAngle = RobotHelper.MAX_AVOID_WALL_TURN;
 
     // test north wall
     wall = Area.NORTH;
-    // north heading
-    expectedAngle = 180;
     angle = RobotHelper.calculateAvoidWall(0, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(maxAngle, angle);
 
     // north west heading
-    expectedAngle = -180;
     angle = RobotHelper.calculateAvoidWall(315, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(-maxAngle, angle);
 
     // north east heading
-    expectedAngle = 180;
     angle = RobotHelper.calculateAvoidWall(45, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(maxAngle, angle);
 
     // south heading
-    expectedAngle = 0;
     angle = RobotHelper.calculateAvoidWall(180, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(0, angle);
 
     // test north east wall
     wall = Area.NORTHEAST;
 
     // test north east heading
-    expectedAngle = 180;
     angle = RobotHelper.calculateAvoidWall(45, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(maxAngle, angle);
 
     // test north heading
-    expectedAngle = -180;
     angle = RobotHelper.calculateAvoidWall(0, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(-maxAngle, angle);
 
     // test east heading
-    expectedAngle = 180;
     angle = RobotHelper.calculateAvoidWall(90, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(maxAngle, angle);
 
     // test south west heading
-    expectedAngle = 0;
     angle = RobotHelper.calculateAvoidWall(270, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(0, angle);
 
     // test north west wall
     wall = Area.NORTHWEST;
 
     // test north west heading
-    expectedAngle = 180;
     angle = RobotHelper.calculateAvoidWall(315, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(maxAngle, angle);
 
     // test north heading
-    expectedAngle = 180;
     angle = RobotHelper.calculateAvoidWall(0, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(maxAngle, angle);
 
     // test west heading
-    expectedAngle = -180;
     angle = RobotHelper.calculateAvoidWall(270, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(-maxAngle, angle);
 
     // test south west heading
-    expectedAngle = 0;
     angle = RobotHelper.calculateAvoidWall(135, wall);
-    testDoubleHelper(expectedAngle, angle);
+    testDoubleHelper(0, angle);
   }
 }
