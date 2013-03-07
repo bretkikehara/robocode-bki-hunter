@@ -1,5 +1,6 @@
 package bki;
 
+import java.awt.Color;
 import bki.RobotHelper.Area;
 import robocode.AdvancedRobot;
 import robocode.Rules;
@@ -20,6 +21,8 @@ public class Hunter extends AdvancedRobot {
 
   @Override
   public void run() {
+    this.setColors(Color.black, Color.black, Color.red);
+    
     this.turnRadarRight(360);
     this.setAdjustRadarForRobotTurn(true);
     this.setAdjustGunForRobotTurn(true);
