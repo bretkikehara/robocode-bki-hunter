@@ -52,76 +52,76 @@ public class TestRobotHelper {
     x = 8;
     y = 9;
     // face north.
-    angle = RobotHelper.calculateAngleToPoint(0, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(0, x, y, centerX, centerY);
     testDoubleHelper(63.43, angle);
 
     // face east
-    angle = RobotHelper.calculateAngleToPoint(90, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(90, x, y, centerX, centerY);
     testDoubleHelper(-26.56, angle);
 
     // face south
-    angle = RobotHelper.calculateAngleToPoint(180, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(180, x, y, centerX, centerY);
     testDoubleHelper(-116.56, angle);
 
     // face south
-    angle = RobotHelper.calculateAngleToPoint(270, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(270, x, y, centerX, centerY);
     testDoubleHelper(-206.56, angle);
 
     // robot position in regards to center: above x and below y.
     x = 13;
     y = 8;
     // face north.
-    angle = RobotHelper.calculateAngleToPoint(0, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(0, x, y, centerX, centerY);
     testDoubleHelper(-56.31, angle);
 
     // face east
-    angle = RobotHelper.calculateAngleToPoint(90, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(90, x, y, centerX, centerY);
     testDoubleHelper(-146.31, angle);
 
     // face south
-    angle = RobotHelper.calculateAngleToPoint(180, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(180, x, y, centerX, centerY);
     testDoubleHelper(-236.31, angle);
 
     // face west
-    angle = RobotHelper.calculateAngleToPoint(270, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(270, x, y, centerX, centerY);
     testDoubleHelper(-326.31, angle);
 
     // robot position in regards to center: below x and above y.
     x = 8;
     y = 13;
     // face north.
-    angle = RobotHelper.calculateAngleToPoint(0, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(0, x, y, centerX, centerY);
     testDoubleHelper(146.31, angle);
 
     // face east
-    angle = RobotHelper.calculateAngleToPoint(90, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(90, x, y, centerX, centerY);
     testDoubleHelper(56.31, angle);
 
     // face south
-    angle = RobotHelper.calculateAngleToPoint(180, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(180, x, y, centerX, centerY);
     testDoubleHelper(-33.69, angle);
 
     // face west
-    angle = RobotHelper.calculateAngleToPoint(270, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(270, x, y, centerX, centerY);
     testDoubleHelper(-123.69, angle);
 
     // robot position in regards to center: above x and above y.
     x = 12;
     y = 13;
     // face north.
-    angle = RobotHelper.calculateAngleToPoint(0, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(0, x, y, centerX, centerY);
     testDoubleHelper(213.69, angle);
 
     // face east
-    angle = RobotHelper.calculateAngleToPoint(90, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(90, x, y, centerX, centerY);
     testDoubleHelper(123.69, angle);
 
     // face south
-    angle = RobotHelper.calculateAngleToPoint(180, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(180, x, y, centerX, centerY);
     testDoubleHelper(33.69, angle);
 
     // face west
-    angle = RobotHelper.calculateAngleToPoint(270, x, y, centerX, centerY);
+    angle = RobotHelper.calculateTurnAngleToPoint(270, x, y, centerX, centerY);
     testDoubleHelper(-56.31, angle);
   }
 
@@ -152,45 +152,6 @@ public class TestRobotHelper {
 
     angle = RobotHelper.calculateOptimalAngle(-185);
     testDoubleHelper(175, angle);
-  }
-
-  /**
-   * Tests the {@link RobotHelper#calculateAngleToHeading} method.
-   */
-  @Test
-  public void testCalculateAngleToHeading() {
-    double angle, robotHeading, enemyBearing, enemyHeading, expected;
-
-    // basic test.
-    robotHeading = 0;
-    enemyBearing = 45;
-    enemyHeading = 90;
-    expected = -135;
-    angle = RobotHelper.calculateAngleToHeading(robotHeading, enemyBearing, enemyHeading);
-    testDoubleHelper(expected, angle);
-
-    // ensure angle is correctly normalized.
-    robotHeading = 20;
-    enemyBearing = -65;
-    enemyHeading = 160;
-    expected = 25;
-    angle = RobotHelper.calculateAngleToHeading(robotHeading, enemyBearing, enemyHeading);
-    testDoubleHelper(expected, angle);
-
-    // TODO finish tests.
-  }
-
-  /**
-   * Tests the {@link RobotHelper#calculateRightAngleToHeading} method.
-   */
-  @Test
-  public void testCalculateRightAngleToHeading() {
-
-    double expectedAngle, angle;
-
-    expectedAngle = 45;
-    angle = RobotHelper.calculateRightAngleToHeading(45);
-    testDoubleHelper(expectedAngle, angle);
   }
 
   /**
