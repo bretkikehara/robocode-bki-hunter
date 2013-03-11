@@ -31,11 +31,24 @@
         <hr>
 
         <section id="main_content">
-          <h3>Welcome to Robocode-BKI-Hunter Project</h3>
-
-<p>The Hunter robot main objective is to stalk the closest opponent at every turn. As a stalker, the robot will try to maintain its distance from the enemy by circling around. At every opportunity, it will try predictive firing in hopes of hitting the enemy.</p>
-
+          <h3>Welcome to robocode-bki-hunter Project</h3>
+          
+<p>
 <img src="https://raw.github.com/bretkikehara/robocode-bki-hunter/master/images/home/Hunter.jpg"/>
+</p>
+
+<h3>About the robot</h3>
+
+<p>robocode-bki-hunter is an <a href="http://robocode.sourceforge.net/">Robocode robot</a> extended from the base <a href="http://robocode.sourceforge.net/docs/robocode/robocode/AdvancedRobot.html">AdvancedRobot</a>. The following details its approach to battling:</p>
+
+<h4>Movement</h3>
+<p>Hunter moves around the battle field in a circular pattern in regards to its opponent at its maximun velocity. When it approaches the battlefield walls within 100 pixels, Hunter will slow down its velocity and make an optimal turn away from the wall. This ensures fluidity of its movement, so there is not lost time changing directions.</p>
+
+<h4>Targeting</h3>
+<p>When a battle round starts, Hunter will lock on to the first robot its radar picks up. Once that robot has been destroyed, it will start to scan for another target.</p>
+
+<h4>Vulnerabilities</h3>
+<p>Due to its movement pattern and its reliance on the enemy robot's bearing, Hunter has a high probability of becoming stuck on the wall. As of this writing, the targeting system still needs to be tweaked to ensure bullet will hit. This robot always fires at maximum power, disregarding the distance to the locked on enemy, so the battle will tend to end quickly even if it is not in Hunter's favor.</p>
 
 <h3>About this project</h3>
 
@@ -44,7 +57,7 @@
 <ul>
 <li><a href="https://github.com/bretkikehara/robocode-bki-hunter/wiki/User-Guide">User Guide</a></li>
 <li><a href="https://github.com/bretkikehara/robocode-bki-hunter/wiki/Developer-Guide">Developer Guide</a></li>
-<li><a href="https://bretkikehara.wordpress.com/contact/">Contact Me</a></li>
+<li><a href="https://github.com/bretkikehara/robocode-bki-hunter/wiki/Contact-Us">Contact Us</a></li>
 </ul>
         </section>
 
