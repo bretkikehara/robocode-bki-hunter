@@ -14,12 +14,8 @@ import robocode.ScannedRobotEvent;
  */
 public class Hunter extends AdvancedRobot {
 
-  private double bearing, distance;
-  private double vector, expectedTime;
-
   private String name = null;
 
-  private long fireTime = 0, scanTime = 0;
   private boolean isWallAvoid = false, isTargeting = false;
 
   @Override
@@ -46,7 +42,6 @@ public class Hunter extends AdvancedRobot {
         this.isWallAvoid = false;
       }
       this.execute();
-      fireTime = this.getTime() + 1;
     }
   }
 
@@ -70,17 +65,76 @@ public class Hunter extends AdvancedRobot {
     }
   }
 
+  
   /**
    * Turns the gun for predictive firing.
    */
-  private void handleTurnGun() {
-    // double enemyVector = RobotHelper.calculateVector(this.heading, this.velocity, 10);
+  private void handleTurnGun(ScannedRobotEvent event) {
 
-    double angleToEnemy = this.getHeading() - this.getGunHeading() + bearing;
-    angleToEnemy = RobotHelper.calculateOptimalAngle(angleToEnemy);
-    this.expectedTime = getTime() + angleToEnemy / Rules.MAX_TURN_RATE;
+    // calculate angle to enemy in radians.
+    double headingToEnemy = this.getHeading() + event.getBearing();
+    double angleToEnemy = headingToEnemy - this.getGunHeading();
 
-    this.setTurnGunRight(angleToEnemy);
+    // calculate the enemy coordinate.
+    double rightAngle = RobotHelper.calculateRightAngleBasedOnHeading(headingToEnemy);
+    double rightAngleRadian = Math.toRadians(rightAngle);
+    
+    double enemyX;
+    double enemyY;
+
+    double angle = headingToEnemy % 360;
+    // handle negative angles.
+    if (headingToEnemy < 0) {
+      angle = 360 + angle;
+    }
+    
+    double offsetX = Math.sin(rightAngleRadian) * event.getDistance();
+    double offsetY = Math.cos(rightAngleRadian) * event.getDistance();
+    
+    if (angle < 90) {
+      enemyX = this.getX() + offsetX;
+      enemyY = this.getY() + offsetY;  
+    }
+    else if (angle < 180) {
+      enemyX = this.getX() + offsetX;
+      enemyY = this.getY() - offsetY;
+    }
+    else if (angle < 270) {
+      enemyX = this.getX() - offsetX;
+      enemyY = this.getY() - offsetY;
+    }
+    else {
+      enemyX = this.getX() - offsetX;
+      enemyY = this.getY() + offsetY;
+    }
+    
+    out.println(enemyX);
+    out.println(enemyY);
+    
+    
+    double time = 5;
+    double expectedDistance = event.getVelocity() * time;
+
+    double expectedX = Math.sin(event.getHeadingRadians()) * expectedDistance + enemyX;
+    double expectedY = Math.cos(event.getHeadingRadians()) * expectedDistance + enemyY;
+
+    double changeX = enemyX - expectedX;
+    double changeY = enemyY - expectedY;
+    double distance = Math.sqrt(changeX * changeX + changeY * changeY);
+
+    double c = (expectedDistance * expectedDistance);
+    double a = (distance * distance);
+    double b = (event.getDistance() * event.getDistance());
+
+    double expectedAngle = Math.acos((c - a - b) / (-2 * distance * event.getDistance()));
+    expectedAngle = RobotHelper.calculateOptimalAngle(expectedAngle);
+
+    if (Double.isNaN(expectedAngle) || Double.isInfinite(expectedAngle)) {
+      isTargeting = false;
+    }
+    else {
+      this.setTurnGunRight(expectedAngle);
+    }
   }
 
   /**
@@ -97,8 +151,7 @@ public class Hunter extends AdvancedRobot {
 
     if (this.name.equals(event.getName())) {
       this.setAhead(100);
-      distance = event.getDistance();
-      bearing = event.getBearing();
+      double bearing = event.getBearing();
 
       // keep enemy in our sights.
       double turnRadar = this.getHeading() + bearing - this.getRadarHeading();
@@ -111,13 +164,9 @@ public class Hunter extends AdvancedRobot {
       }
 
       if (!isTargeting) {
-        this.handleTurnGun();
         isTargeting = true;
+        this.handleTurnGun(event);
       }
-
-      // calculate predictive firing.
-      scanTime = this.getTime();
-      vector = event.getVelocity() * Math.sin(event.getHeadingRadians());
     }
   }
 

@@ -15,6 +15,52 @@ public class RobotHelper {
   public static final double MAX_AVOID_WALL_TURN = 75;
 
   /**
+   * Defines the ooordinate.
+   * 
+   * @author Bret K. Ikehara
+   */
+  public class Coordinate {
+
+    private double x, y;
+
+    /**
+     * Default values.
+     */
+    public Coordinate() {
+      this(0, 0);
+    }
+
+    /**
+     * Defines the coordinate.
+     * 
+     * @param x double
+     * @param y double
+     */
+    public Coordinate(double x, double y) {
+      this.x = x;
+      this.y = y;
+    }
+
+    /**
+     * Gets this x-coordinate.
+     * 
+     * @return double
+     */
+    public double getX() {
+      return x;
+    }
+
+    /**
+     * Gets this y-coordinate.
+     * 
+     * @return double
+     */
+    public double getY() {
+      return y;
+    }
+  }
+
+  /**
    * Defines an area enumeration for each direction starting with north. See
    * {@link Robot#getHeading}() for more information regarding meaning behind enumerated values.
    * 
@@ -213,7 +259,7 @@ public class RobotHelper {
    */
   public static double calculateAngleToPoint(final Robot robot, final double pointX,
       final double pointY) {
-    return calculateTurnAngleToPoint(robot.getHeading(), robot.getX(), robot.getY(), pointX, pointY);
+    return calculateAngleToPoint(robot.getHeading(), robot.getX(), robot.getY(), pointX, pointY);
   }
 
   /**
@@ -227,7 +273,7 @@ public class RobotHelper {
    * @param pointY double Coordinate to point the robot.
    * @return double
    */
-  public static double calculateTurnAngleToPoint(final double heading, final double robotX,
+  public static double calculateAngleToPoint(final double heading, final double robotX,
       final double robotY, final double pointX, final double pointY) {
     double tanget = (pointX - robotX) / (pointY - robotY);
     double angle = Math.atan(tanget);
@@ -243,6 +289,98 @@ public class RobotHelper {
     }
 
     return headingTowardsPoint + angle;
+  }
+
+  /**
+   * Calculates the oblique triangle in regards to an enemy bearing and heading. Helps calculate the
+   * angle needing to turn the gun to hit our target.
+   * 
+   * @param robotHeading double
+   * @param enemyBearing double
+   * @param enemyHeading double
+   * @return double
+   */
+  public static double calculateAngleToHeading(final double robotHeading,
+      final double enemyBearing, final double enemyHeading) {
+    double angleToRobot = (robotHeading + enemyBearing) % 360;
+    // right triangle angle.
+    double triangleAngle = angleToRobot % 90;
+
+    double offset;
+    if (angleToRobot < 90) {
+      offset = 180;
+    }
+    else if (angleToRobot < 180) {
+      offset = 270;
+    }
+    else if (angleToRobot < 270) {
+      offset = 0;
+    }
+    else {
+      offset = 90;
+    }
+
+    return enemyHeading - (triangleAngle + offset);
+  }
+
+  /**
+   * Calculates the right angle for the robot based on enemy heading.
+   * 
+   * An example:
+   * 
+   * calculateRightAngleBasedOnHeading(robotHeading - event.getBearing());
+   * 
+   * @param headingToEnemy double
+   * @return double
+   */
+  public static double calculateRightAngleBasedOnHeading(double headingToEnemy) {
+    double angle = headingToEnemy % 360;
+    // handle negative angles.
+    if (headingToEnemy < 0) {
+      angle = 360 + angle;
+    }
+
+    if (angle < 90) {
+      return angle;
+    }
+    else if (angle < 180) {
+      return 90 - (angle % 90);
+    }
+    else if (angle < 270) {
+      return angle % 90;
+    }
+    else {
+      return 90 - (angle % 90);
+    }
+  }
+
+  public static Coordinate calculateEnemyRobotPosition() {
+
+    double angle = headingToEnemy % 360;
+    // handle negative angles.
+    if (headingToEnemy < 0) {
+      angle = 360 + angle;
+    }
+
+    double offsetX = Math.sin(rightAngleRadian) * event.getDistance();
+    double offsetY = Math.cos(rightAngleRadian) * event.getDistance();
+
+    if (angle < 90) {
+      enemyX = this.getX() + offsetX;
+      enemyY = this.getY() + offsetY;
+    }
+    else if (angle < 180) {
+      enemyX = this.getX() + offsetX;
+      enemyY = this.getY() - offsetY;
+    }
+    else if (angle < 270) {
+      enemyX = this.getX() - offsetX;
+      enemyY = this.getY() - offsetY;
+    }
+    else {
+      enemyX = this.getX() - offsetX;
+      enemyY = this.getY() + offsetY;
+    }
   }
 
   /**
