@@ -2,6 +2,7 @@ package bki;
 
 import java.awt.Color;
 import bki.RobotHelper.Area;
+import bki.RobotHelper.Coordinate;
 import robocode.AdvancedRobot;
 import robocode.RobotDeathEvent;
 import robocode.Rules;
@@ -14,9 +15,9 @@ import robocode.ScannedRobotEvent;
  */
 public class Hunter extends AdvancedRobot {
 
-  private String name = null;
+  private String targetName = null;
 
-  private boolean isWallAvoid = false, isTargeting = false;
+  private boolean isWallAvoidPhase = false, isTargetingPhase = false;
 
   @Override
   public void run() {
@@ -26,20 +27,22 @@ public class Hunter extends AdvancedRobot {
     this.setAdjustRadarForGunTurn(true);
 
     // lock onto an enemy
-    while (this.name == null) {
+    while (this.targetName == null) {
       this.setTurnRadarRight(360);
       this.execute();
     }
 
     while (true) {
-      if (getGunTurnRemaining() == 0) {
-        isTargeting = false;
+      // only shoot after turning gun according to our predictive fire algorithm.
+      if (isTargetingPhase && getGunTurnRemaining() == 0) {
+        isTargetingPhase = false;
         this.setFire(Rules.MAX_BULLET_POWER);
       }
-      this.handleAvoidWall();
 
-      if (this.isWallAvoid && getTurnRemaining() == 0) {
-        this.isWallAvoid = false;
+      // overrides any other move patterns.
+      this.handleAvoidWall();
+      if (this.isWallAvoidPhase && getTurnRemaining() == 0) {
+        this.isWallAvoidPhase = false;
       }
       this.execute();
     }
@@ -59,81 +62,59 @@ public class Hunter extends AdvancedRobot {
 
     // checks whether we are close to the wall.
     if (angleAwayFromWall != 0) {
-      this.isWallAvoid = true;
+      this.isWallAvoidPhase = true;
       this.setTurnRight(angleAwayFromWall);
       this.setAhead(10);
     }
   }
 
-  
   /**
-   * Turns the gun for predictive firing.
+   * Turns the gun for predictive firing. Some concepts taken from <a
+   * href="http://www.ibm.com/developerworks/library/j-pred-targeting/">Secrets from the Robocode
+   * masters: Predictive targeting</a>.
+   * 
+   * @param event {@link ScannedRobotEvent}
    */
   private void handleTurnGun(ScannedRobotEvent event) {
 
-    // calculate angle to enemy in radians.
+    // calculate enemy coordinate
     double headingToEnemy = this.getHeading() + event.getBearing();
-    double angleToEnemy = headingToEnemy - this.getGunHeading();
+    Coordinate enemyPosition =
+        RobotHelper.calculateEnemyRobotPosition(this.getX(), this.getY(), headingToEnemy,
+            event.getDistance());
+    double enemyX = enemyPosition.getX();
+    double enemyY = enemyPosition.getY();
 
-    // calculate the enemy coordinate.
-    double rightAngle = RobotHelper.calculateRightAngleBasedOnHeading(headingToEnemy);
-    double rightAngleRadian = Math.toRadians(rightAngle);
-    
-    double enemyX;
-    double enemyY;
+    // ensure expected position is variable.
+    double time = 20 + (Math.random() * 3);
+    if (Math.random() < 0.5) {
+      time = -time;
+    }
 
-    double angle = headingToEnemy % 360;
-    // handle negative angles.
-    if (headingToEnemy < 0) {
-      angle = 360 + angle;
-    }
-    
-    double offsetX = Math.sin(rightAngleRadian) * event.getDistance();
-    double offsetY = Math.cos(rightAngleRadian) * event.getDistance();
-    
-    if (angle < 90) {
-      enemyX = this.getX() + offsetX;
-      enemyY = this.getY() + offsetY;  
-    }
-    else if (angle < 180) {
-      enemyX = this.getX() + offsetX;
-      enemyY = this.getY() - offsetY;
-    }
-    else if (angle < 270) {
-      enemyX = this.getX() - offsetX;
-      enemyY = this.getY() - offsetY;
-    }
-    else {
-      enemyX = this.getX() - offsetX;
-      enemyY = this.getY() + offsetY;
-    }
-    
-    out.println(enemyX);
-    out.println(enemyY);
-    
-    
-    double time = 5;
+    // calculate enemy expected position.
     double expectedDistance = event.getVelocity() * time;
-
     double expectedX = Math.sin(event.getHeadingRadians()) * expectedDistance + enemyX;
     double expectedY = Math.cos(event.getHeadingRadians()) * expectedDistance + enemyY;
+    double absDistance = Math.abs(expectedDistance);
 
-    double changeX = enemyX - expectedX;
-    double changeY = enemyY - expectedY;
-    double distance = Math.sqrt(changeX * changeX + changeY * changeY);
+    // calculate the expected bullet distance.
+    double bulletDistance =
+        RobotHelper.calculateDistance(this.getX(), this.getY(), expectedX, expectedY);
 
-    double c = (expectedDistance * expectedDistance);
-    double a = (distance * distance);
-    double b = (event.getDistance() * event.getDistance());
+    // calculate the expected angle using the law of cosines.
+    double expectedAngle =
+        RobotHelper.calculateLawOfCosinesForAngle(event.getDistance(), bulletDistance, absDistance);
 
-    double expectedAngle = Math.acos((c - a - b) / (-2 * distance * event.getDistance()));
-    expectedAngle = RobotHelper.calculateOptimalAngle(expectedAngle);
+    // calculate the angle the gun should turn.
+    double gunTurnAngle = headingToEnemy - this.getGunHeading() + expectedAngle;
+    gunTurnAngle = RobotHelper.calculateOptimalAngle(gunTurnAngle);
 
-    if (Double.isNaN(expectedAngle) || Double.isInfinite(expectedAngle)) {
-      isTargeting = false;
+    // allow gun to turn before firing.
+    if (Double.isNaN(gunTurnAngle) || Double.isInfinite(gunTurnAngle)) {
+      isTargetingPhase = false;
     }
     else {
-      this.setTurnGunRight(expectedAngle);
+      this.setTurnGunRight(gunTurnAngle);
     }
   }
 
@@ -145,11 +126,11 @@ public class Hunter extends AdvancedRobot {
   @Override
   public void onScannedRobot(ScannedRobotEvent event) {
     // target the closest enemy.
-    if (name == null) {
-      name = event.getName();
+    if (targetName == null) {
+      targetName = event.getName();
     }
 
-    if (this.name.equals(event.getName())) {
+    if (this.targetName.equals(event.getName())) {
       this.setAhead(100);
       double bearing = event.getBearing();
 
@@ -159,12 +140,13 @@ public class Hunter extends AdvancedRobot {
       this.setTurnRadarRight(turnRadar);
 
       // get angle of this robot.
-      if (!this.isWallAvoid) {
+      if (!this.isWallAvoidPhase) {
         this.setTurnRight(bearing + this.getHeading());
       }
 
-      if (!isTargeting) {
-        isTargeting = true;
+      // calculate our predictive firing.
+      if (!isTargetingPhase) {
+        isTargetingPhase = true;
         this.handleTurnGun(event);
       }
     }
@@ -177,8 +159,8 @@ public class Hunter extends AdvancedRobot {
    */
   @Override
   public void onRobotDeath(RobotDeathEvent event) {
-    if (this.name.equals(event.getName())) {
-      this.name = null;
+    if (this.targetName.equals(event.getName())) {
+      this.targetName = null;
     }
   }
 }

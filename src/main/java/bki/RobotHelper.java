@@ -19,7 +19,7 @@ public class RobotHelper {
    * 
    * @author Bret K. Ikehara
    */
-  public class Coordinate {
+  public static class Coordinate {
 
     private double x, y;
 
@@ -208,19 +208,6 @@ public class RobotHelper {
     }
   };
 
-  // helps calculate radian to degree.
-  private static final double RADIAN_TO_DEGREE = 180 / Math.PI;
-
-  /**
-   * Converts a radian value to degree value.
-   * 
-   * @param radian double
-   * @return double
-   */
-  public static final double convertRadiantoDegrees(double radian) {
-    return radian * RADIAN_TO_DEGREE;
-  }
-
   /**
    * Calculates the distance between two points on a Cartesian plane.
    * 
@@ -257,9 +244,9 @@ public class RobotHelper {
    * @param pointY double Coordinate to point the robot.
    * @return double
    */
-  public static double calculateAngleToPoint(final Robot robot, final double pointX,
+  public static double calculateHeadingToPoint(final Robot robot, final double pointX,
       final double pointY) {
-    return calculateAngleToPoint(robot.getHeading(), robot.getX(), robot.getY(), pointX, pointY);
+    return calculateHeadingToPoint(robot.getHeading(), robot.getX(), robot.getY(), pointX, pointY);
   }
 
   /**
@@ -273,11 +260,11 @@ public class RobotHelper {
    * @param pointY double Coordinate to point the robot.
    * @return double
    */
-  public static double calculateAngleToPoint(final double heading, final double robotX,
+  public static double calculateHeadingToPoint(final double heading, final double robotX,
       final double robotY, final double pointX, final double pointY) {
     double tanget = (pointX - robotX) / (pointY - robotY);
     double angle = Math.atan(tanget);
-    angle = convertRadiantoDegrees(angle);
+    angle = Math.toDegrees(angle);
 
     // face in the y-direction towards the point.
     double headingTowardsPoint;
@@ -289,6 +276,23 @@ public class RobotHelper {
     }
 
     return headingTowardsPoint + angle;
+  }
+
+  /**
+   * Calculate the angle for given points. Return value is given as an angle that a robot could use
+   * to turn right.
+   * 
+   * @param robotX double Robot's x coordinate.
+   * @param robotY double Robot's y coordinate.
+   * @param pointX double Coordinate to point the robot.
+   * @param pointY double Coordinate to point the robot.
+   * @return double
+   */
+  public static double calculateAngleToPoint(final double robotX, final double robotY,
+      final double pointX, final double pointY) {
+    double tanget = (pointX - robotX) / (pointY - robotY);
+    double angle = Math.atan(tanget);
+    return Math.toDegrees(angle);
   }
 
   /**
@@ -354,7 +358,17 @@ public class RobotHelper {
     }
   }
 
-  public static Coordinate calculateEnemyRobotPosition() {
+  /**
+   * Calculates the enemy robot's position.
+   * 
+   * @param robotX double
+   * @param robotY double
+   * @param headingToEnemy double
+   * @param distanceToEnemy double
+   * @return {@link Coordinate}
+   */
+  public static Coordinate calculateEnemyRobotPosition(double robotX, double robotY,
+      double headingToEnemy, double distanceToEnemy) {
 
     double angle = headingToEnemy % 360;
     // handle negative angles.
@@ -362,25 +376,31 @@ public class RobotHelper {
       angle = 360 + angle;
     }
 
-    double offsetX = Math.sin(rightAngleRadian) * event.getDistance();
-    double offsetY = Math.cos(rightAngleRadian) * event.getDistance();
+    double rightAngleRadian = calculateRightAngleBasedOnHeading(headingToEnemy);
+    rightAngleRadian = Math.toRadians(rightAngleRadian);
 
+    double offsetX = Math.sin(rightAngleRadian) * distanceToEnemy;
+    double offsetY = Math.cos(rightAngleRadian) * distanceToEnemy;
+
+    double enemyX, enemyY;
     if (angle < 90) {
-      enemyX = this.getX() + offsetX;
-      enemyY = this.getY() + offsetY;
+      enemyX = robotX + offsetX;
+      enemyY = robotY + offsetY;
     }
     else if (angle < 180) {
-      enemyX = this.getX() + offsetX;
-      enemyY = this.getY() - offsetY;
+      enemyX = robotX + offsetX;
+      enemyY = robotY - offsetY;
     }
     else if (angle < 270) {
-      enemyX = this.getX() - offsetX;
-      enemyY = this.getY() - offsetY;
+      enemyX = robotX - offsetX;
+      enemyY = robotY - offsetY;
     }
     else {
-      enemyX = this.getX() - offsetX;
-      enemyY = this.getY() + offsetY;
+      enemyX = robotX - offsetX;
+      enemyY = robotY + offsetY;
     }
+
+    return new Coordinate(enemyX, enemyY);
   }
 
   /**
@@ -437,6 +457,24 @@ public class RobotHelper {
       return -MAX_AVOID_WALL_TURN;
     }
     return 0;
+  }
+
+  /**
+   * Calculates the law of cosine for angle C.
+   * 
+   * @param sideA double
+   * @param sideB double
+   * @param sideC double
+   * @return double in degrees.
+   */
+  public static double calculateLawOfCosinesForAngle(final double sideA, final double sideB,
+      final double sideC) {
+
+    double sideASquared = Math.pow(sideA, 2);
+    double sideBSquared = Math.pow(sideB, 2);
+    double sideCSquared = Math.pow(sideC, 2);
+    double angle = Math.acos((sideASquared + sideBSquared - sideCSquared) / (2 * sideA * sideB));
+    return Math.toDegrees(angle);
   }
 
   /**
