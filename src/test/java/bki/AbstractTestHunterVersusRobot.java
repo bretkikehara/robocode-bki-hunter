@@ -30,7 +30,7 @@ public abstract class AbstractTestHunterVersusRobot extends RobotTestBed {
    */
   @Override
   public int getNumRounds() {
-    return 20;
+    return 10;
   }
 
   /**

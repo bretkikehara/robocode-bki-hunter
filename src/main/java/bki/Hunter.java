@@ -44,6 +44,10 @@ public class Hunter extends AdvancedRobot {
       if (this.isWallAvoidPhase && getTurnRemaining() == 0) {
         this.isWallAvoidPhase = false;
       }
+      
+      if (targetName == null) {
+        this.setTurnRadarRight(360);
+      }
       this.execute();
     }
   }
@@ -129,6 +133,7 @@ public class Hunter extends AdvancedRobot {
     if (targetName == null) {
       targetName = event.getName();
     }
+    this.setDebugProperty("targetName", targetName);
 
     if (this.targetName.equals(event.getName())) {
       this.setAhead(100);
@@ -161,6 +166,7 @@ public class Hunter extends AdvancedRobot {
   public void onRobotDeath(RobotDeathEvent event) {
     if (this.targetName.equals(event.getName())) {
       this.targetName = null;
+      this.setDebugProperty("targetName", targetName);
     }
   }
 }

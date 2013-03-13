@@ -7,7 +7,7 @@
 	<!-- Note that groupId is used to determine the directory to delete in ${robocode.home}/robots -->
 	<groupId>bki</groupId>
 	<artifactId>hunter</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.1-SNAPSHOT</version>
 	<name>hunter</name>
 
 	<properties>
